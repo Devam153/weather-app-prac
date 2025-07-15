@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather for {{ weather.city }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Weather in {{ weather.city }}, {{ weather.country }}</h1>
+        <p>{{ weather.description }}</p>
+        <p>Temperature: {{ weather.temp }}°F</p>
+        <p>Humidity: {{ weather.humidity }}%</p>
+        <a href="{{ url_for('weather') }}" class="button">Check another city</a>
+        <p><a href="{{ url_for('logout') }}">Logout</a></p>
+    </div>
+</body>
+
+</html>

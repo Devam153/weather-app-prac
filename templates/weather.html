@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Weather App</h1>
+        <form method="POST" action="{{ url_for('weather') }}">
+            <input type="text" name="city" placeholder="Enter city name" required />
+            <button type="submit">Get Weather</button>
+        </form>
+    </div>
+
+    {% if error %}
+    <p class="flash-message flash-danger">{{ error }}</p>
+    {% endif %}
+
+    {% if weather %}
+    <div class="weather-info">
+        <h2 style="text-align: center;">Weather in {{ weather.city }}, {{ weather.country }}</h2>
+        <p class="description">Description: {{ weather.description }}</p>
+        <div class="weather-details">
+            <p><strong>Temperature</strong><br>{{ weather.temp }}°C</p>
+            <p><strong>Feels Like</strong><br>{{ weather.feels_like }}°C</p>
+            <p><strong>Humidity</strong><br>{{ weather.humidity }}%</p>
+            <p><strong>Min Temperature</strong><br>{{ weather.temp_min }}°C</p>
+            <p><strong>Max Temperature</strong><br>{{ weather.temp_max }}°C</p>
+            <p><strong>Pressure</strong><br>{{ weather.pressure }} hPa</p>
+            <p><strong>Wind Speed</strong><br>{{ weather.wind_speed }} m/s</p>
+        </div>
+    </div>
+    {% endif %}
+
+</body>
+
+</html>
