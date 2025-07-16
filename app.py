@@ -3,10 +3,8 @@ import re
 import requests
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 
-# Load environment variables
 load_dotenv()
 API_KEY = os.getenv("OPENWEATHERMAP_API_KEY")
 
@@ -14,9 +12,9 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 db = SQLAlchemy(app)
 
-# User model
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
@@ -38,7 +36,7 @@ def signup():
             flash('Username already exists.', 'danger')
             return redirect(url_for('signup'))
 
-        new_user = User(username=username, password=generate_password_hash(password, method='pbkdf2:sha256'))
+        new_user = User(username=username, password=password)
         db.session.add(new_user)
         db.session.commit()
 
@@ -53,18 +51,12 @@ def login():
         password = request.form.get('password')
         user = User.query.filter_by(username=username).first()
 
-        if user and check_password_hash(user.password, password):
+        if user and user.password == password:
             session['user_id'] = user.id
             return redirect(url_for('weather'))
         else:
             flash('Invalid username or password.', 'danger')
     return render_template('login.html')
-
-@app.route('/')
-def index():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    return redirect(url_for('weather'))
 
 @app.route('/weather', methods=['GET', 'POST'])
 def weather():
@@ -93,11 +85,8 @@ def weather():
                     'description': data['weather'][0]['description'].capitalize(),
                     'temp': data['main']['temp'],
                     'feels_like': data['main']['feels_like'],
-                    'temp_min': data['main']['temp_min'],
-                    'temp_max': data['main']['temp_max'],
                     'humidity': data['main']['humidity'],
                     'pressure': data['main']['pressure'],
-                    'visibility': data['visibility'],
                     'wind_speed': data['wind']['speed'],
                 }
             else:
